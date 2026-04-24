@@ -28,10 +28,4 @@
         </include>
     </source>
 
-    <coverage>
-        <report>
-            <html outputDirectory="coverage"/>
-            <xml outputDirectory="coverage/xml"/>
-        </report>
-    </coverage>
 </phpunit>
