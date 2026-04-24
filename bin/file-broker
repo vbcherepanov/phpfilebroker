@@ -1,0 +1,39 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * File Broker CLI entry point.
+ */
+
+// Autoload
+$vendorPath = __DIR__ . '/../vendor/autoload.php';
+if (!\file_exists($vendorPath)) {
+    fwrite(STDERR, "Error: vendor/autoload.php not found. Run 'composer install'\n");
+    exit(1);
+}
+
+require_once $vendorPath;
+
+use FileBroker\Broker\MessageBroker;
+use FileBroker\CLI\Console;
+use FileBroker\Config\BrokerConfig;
+
+// Load config if available
+$configPath = $_ENV['FILE_BROKER_CONFIG']
+    ?? (\getcwd() . '/config/broker.json');
+
+$config = BrokerConfig::default();
+if (\file_exists($configPath)) {
+    try {
+        $config = BrokerConfig::fromFile($configPath);
+    } catch (\Throwable $e) {
+        fwrite(STDERR, "Warning: Could not load config: {$e->getMessage()}\n");
+    }
+}
+
+$broker = new MessageBroker($config);
+$console = new Console($broker);
+
+exit($console->run());

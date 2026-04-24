@@ -1,0 +1,45 @@
+# Dependencies
+vendor/
+
+# Build / cache
+.phpunit.cache/
+coverage/
+.php-cs-fixer.cache
+*.php.inc
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Storage — keep dirs but not runtime data
+storage/queues/*
+storage/dead-letter/*
+storage/retry/*
+!storage/queues/.gitkeep
+!storage/dead-letter/.gitkeep
+!storage/retry/.gitkeep
+
+# Config (local overrides)
+config/broker.local.json
+
+# Composer
+composer.lock
+
+# PHP
+phpstan.neon
+
+# Frog Code
+.frogcode/
+/*.md
+# Local docs
+docs/
+
+# Docker build context
+.docker/

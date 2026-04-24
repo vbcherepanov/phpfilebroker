@@ -1,0 +1,39 @@
+{
+  "storage_path": "storage",
+  "default_queue": "default",
+  "lock_timeout": 30,
+  "poll_interval": 1,
+  "max_workers": 4,
+  "queues": {
+    "default": {
+      "name": "default",
+      "base_path": "storage",
+      "default_ttl": null,
+      "max_retry": 3,
+      "retry_delay": 60,
+      "dead_letter": true,
+      "dead_letter_queue": "dlq",
+      "max_message_size": 10485760
+    },
+    "orders": {
+      "name": "orders",
+      "base_path": "storage",
+      "default_ttl": 86400,
+      "max_retry": 5,
+      "retry_delay": 120,
+      "dead_letter": true,
+      "dead_letter_queue": "orders.dlq",
+      "max_message_size": 5242880
+    },
+    "emails": {
+      "name": "emails",
+      "base_path": "storage",
+      "default_ttl": 3600,
+      "max_retry": 3,
+      "retry_delay": 30,
+      "dead_letter": true,
+      "dead_letter_queue": "emails.dlq",
+      "max_message_size": 1048576
+    }
+  }
+}

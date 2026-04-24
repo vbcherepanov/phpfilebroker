@@ -1,0 +1,36 @@
+{
+  "name": "vbcherepanov/phpfilebroker",
+  "description": "RabbitMQ + Kafka + NATS — on your filesystem. Exchanges, streams, consumer groups, priority queues, zero dependencies beyond PSR interfaces.",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.4",
+    "ext-json": "*",
+    "ext-spl": "*",
+    "ext-ctype": "*",
+    "ext-mbstring": "*",
+    "psr/event-dispatcher": "^1.0",
+    "psr/log": "^3.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.0",
+    "friendsofphp/php-cs-fixer": "^3.50",
+    "phpstan/phpstan": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "FileBroker\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "FileBroker\\Tests\\": "tests/"
+    }
+  },
+  "bin": [
+    "bin/file-broker"
+  ],
+  "config": {
+    "sort-packages": true
+  }
+}

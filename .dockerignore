@@ -1,0 +1,40 @@
+# Dependencies
+/vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Storage
+storage/queues/
+storage/dead-letter/
+storage/retry/
+
+# Config (local overrides)
+config/broker.local.json
+
+# Composer
+composer.lock
+
+# PHP
+.php-cs-fixer.php
+
+# Tests
+coverage/
+.phpunit.cache/
+
+# Docker
+docker-compose.yml
+Dockerfile
+
+# Git
+.git
+
+# Logs
+*.log

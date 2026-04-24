@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+# Cancel in-progress runs on the same branch/PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: PHP ${{ matrix.php }} — Tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.4']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json, ctype, mbstring
+          tools: composer:v2
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ matrix.php }}-${{ hashFiles('composer.json') }}
+          restore-keys: |
+            composer-${{ matrix.php }}-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Prepare storage directories
+        run: mkdir -p storage/{queues,dead-letter,retry}
+
+      - name: PHPUnit
+        run: vendor/bin/phpunit --colors=always --fail-on-risky
+
+      - name: PHPStan
+        run: |
+          if [ ! -f phpstan.neon ]; then
+            echo "parameters:" > phpstan.neon
+            echo "    level: 8" >> phpstan.neon
+            echo "    paths:" >> phpstan.neon
+            echo "        - src" >> phpstan.neon
+            echo "    checkMissingIterableValueType: false" >> phpstan.neon
+            echo "    inferPrivatePropertyTypeFromConstructor: true" >> phpstan.neon
+            echo "    reportMaybesInMethodSignatures: true" >> phpstan.neon
+            echo "    reportStaticMethodSignatures: true" >> phpstan.neon
+          fi
+          vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=512M
+
+      - name: PHP CS Fixer
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
+
+  forward-compat:
+    name: PHP ${{ matrix.php }} — Forward compat
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.5']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json, ctype, mbstring
+          tools: composer:v2
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ matrix.php }}-${{ hashFiles('composer.json') }}
+          restore-keys: |
+            composer-${{ matrix.php }}-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Prepare storage directories
+        run: mkdir -p storage/{queues,dead-letter,retry}
+
+      - name: PHPUnit
+        run: vendor/bin/phpunit --colors=always --fail-on-risky
+
+      - name: PHPStan
+        run: |
+          if [ ! -f phpstan.neon ]; then
+            echo "parameters:" > phpstan.neon
+            echo "    level: 8" >> phpstan.neon
+            echo "    paths:" >> phpstan.neon
+            echo "        - src" >> phpstan.neon
+            echo "    checkMissingIterableValueType: false" >> phpstan.neon
+            echo "    inferPrivatePropertyTypeFromConstructor: true" >> phpstan.neon
+            echo "    reportMaybesInMethodSignatures: true" >> phpstan.neon
+            echo "    reportStaticMethodSignatures: true" >> phpstan.neon
+          fi
+          vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=512M
