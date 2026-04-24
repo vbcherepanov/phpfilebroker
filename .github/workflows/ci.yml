@@ -49,21 +49,10 @@ jobs:
         run: mkdir -p storage/{queues,dead-letter,retry}
 
       - name: PHPUnit
-        run: vendor/bin/phpunit --colors=always --fail-on-risky
+        run: vendor/bin/phpunit --colors=always --no-progress
 
       - name: PHPStan
-        run: |
-          if [ ! -f phpstan.neon ]; then
-            echo "parameters:" > phpstan.neon
-            echo "    level: 8" >> phpstan.neon
-            echo "    paths:" >> phpstan.neon
-            echo "        - src" >> phpstan.neon
-            echo "    checkMissingIterableValueType: false" >> phpstan.neon
-            echo "    inferPrivatePropertyTypeFromConstructor: true" >> phpstan.neon
-            echo "    reportMaybesInMethodSignatures: true" >> phpstan.neon
-            echo "    reportStaticMethodSignatures: true" >> phpstan.neon
-          fi
-          vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=512M
+        run: vendor/bin/phpstan analyse -c phpstan.dist.neon --memory-limit=512M
 
       - name: PHP CS Fixer
         run: vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
@@ -105,18 +94,7 @@ jobs:
         run: mkdir -p storage/{queues,dead-letter,retry}
 
       - name: PHPUnit
-        run: vendor/bin/phpunit --colors=always --fail-on-risky
+        run: vendor/bin/phpunit --colors=always --no-progress
 
       - name: PHPStan
-        run: |
-          if [ ! -f phpstan.neon ]; then
-            echo "parameters:" > phpstan.neon
-            echo "    level: 8" >> phpstan.neon
-            echo "    paths:" >> phpstan.neon
-            echo "        - src" >> phpstan.neon
-            echo "    checkMissingIterableValueType: false" >> phpstan.neon
-            echo "    inferPrivatePropertyTypeFromConstructor: true" >> phpstan.neon
-            echo "    reportMaybesInMethodSignatures: true" >> phpstan.neon
-            echo "    reportStaticMethodSignatures: true" >> phpstan.neon
-          fi
-          vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=512M
+        run: vendor/bin/phpstan analyse -c phpstan.dist.neon --memory-limit=512M
